@@ -2,7 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background: #202020;
-  color: white;
+.bg {
+  background-image: url("./img/fondoLogin.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.26);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6.9px);
+  -webkit-backdrop-filter: blur(6.9px);
+  border: 1px solid rgba(255, 255, 255, 0.36);
 }
