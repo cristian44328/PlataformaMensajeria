@@ -8,6 +8,10 @@ export const register = async (req, res) => {
 
     try {
 
+        const userFound = await User.findOne({email});
+        if (userFound)
+            return res.status(400).json(['El Correo ya esta en uso']);
+
         const passwordHash = await bcrypt.hash(password, 10);
 
         const newUser = new User({
@@ -77,7 +81,7 @@ export const profile = async (req, res) => {
     return res.json( {
         id: userFound._id,
         username: userFound.username,
-        email: userFound.email
+        email: userFound.email,
     })
-    res.send("profile")
+    res.send("profile");
 }
