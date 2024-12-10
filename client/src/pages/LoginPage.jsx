@@ -1,17 +1,27 @@
 import { useForm } from "react-hook-form"
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { loginSchema } from "../schemas/auth";
+import { useEffect } from "react";
 
 
 function LoginPage() {
 
-    const { register, handleSubmit, formState: {errors}} = useForm();
-    const {signin, errors: loginErrors } = useAuth();
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: zodResolver(loginSchema)
+    },
+    );
+    const { signin, errors: loginErrors, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
 
-    const onsubmit = handleSubmit(async (data) => {
-       // console.log(data);
-        signin(data);
-    });
+    const onsubmit = (data) => signin(data);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+          navigate("/chats");
+        }
+      }, [isAuthenticated]);
 
     return (
         <div className='w-full h-screen flex items-center justify-center tracking-wider'>
@@ -26,8 +36,8 @@ function LoginPage() {
                         </div>
                     ))
                 }
-                <form onSubmit={onsubmit} className="my-2">
-                   
+                <form onSubmit={handleSubmit(onsubmit)} className="my-2">
+
                     <div className="flex flex-col mx-5 my-7">
                         <div className="flex border-b-black border-b-2 py-1">
                             <input
