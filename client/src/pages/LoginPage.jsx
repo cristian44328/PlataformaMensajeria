@@ -19,19 +19,19 @@ function LoginPage() {
 
     useEffect(() => {
         if (isAuthenticated) {
-          navigate("/chats");
+            navigate("/chats");
         }
-      }, [isAuthenticated]);
+    }, [isAuthenticated]);
 
     return (
-        <div className='w-full h-screen flex items-center justify-center tracking-wider'>
-            <div className='w-11/12 sm:w-5/12 md:w-3/12 text-sm glass'>
-                <div className='w-full text-center my-3'>
-                    <h2 className='text-2xl text-black font-medium'>Iniciar Sesion</h2>
+        <div className="w-full h-screen flex items-center justify-center tracking-wider">
+            <div className="w-11/12 sm:w-5/12 md:w-3/12 text-sm glass">
+                <div className="w-full text-center my-3">
+                    <h2 className="text-2xl text-black font-medium">Iniciar Sesion</h2>
                 </div>
                 {
                     loginErrors.map((error, i) => (
-                        <div className='bg-red-500 p-2 text-white my-1' key={i}>
+                        <div className="bg-red-500 p-2 text-white my-1" key={i}>
                             {error}
                         </div>
                     ))
@@ -43,11 +43,11 @@ function LoginPage() {
                             <input
                                 type="email"
                                 {...register("email", { required: true })}
-                                className="w-11/12 bg-transparent outline-none placeholder-black"
+                                className="w-11/12 bg-transparent outline-none placeholder-black text-black" // Añadido text-black
                                 placeholder="Ingresa tu correo electrónico"
                             />
                             <div className="w-2/12 flex items-center justify-center">
-                                <i className="fa-solid fa-envelope text-xl"></i>
+                                <i className="fa-solid fa-envelope text-black text-xl"></i> {/* Icono con color negro */}
                             </div>
                         </div>
                         {errors.email && (
@@ -60,11 +60,11 @@ function LoginPage() {
                             <input
                                 type="password"
                                 {...register("password", { required: true })}
-                                className="w-11/12 bg-transparent outline-none placeholder-black"
+                                className="w-11/12 bg-transparent outline-none placeholder-black text-black" // Añadido text-black
                                 placeholder="Contraseña nueva"
                             />
                             <div className="w-2/12 flex items-center justify-center">
-                                <i className="fa-solid fa-lock text-xl"></i>
+                                <i className="fa-solid fa-lock text-black text-xl"></i> {/* Icono con color negro */}
                             </div>
                         </div>
                         {errors.password && (
@@ -78,10 +78,9 @@ function LoginPage() {
                         </button>
                     </div>
                     <Link to="/register" className="mx-5 my-5 py-2 flex items-center justify-center">
-                        <p className="text-sm">No tienes cuenta? / Registrarte</p>
+                        <p className="text-sm text-black">No tienes cuenta? / Registrarte</p> {/* Color negro para el texto */}
                     </Link>
                 </form>
-
             </div>
         </div>
     )
