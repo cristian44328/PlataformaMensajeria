@@ -10,7 +10,7 @@ export const register = async (req, res) => {
 
     try {
 
-        const userFound = await User.findOne({email});
+        const userFound = await User.findOne({ email });
         if (userFound)
             return res.status(400).json(['El Correo ya esta en uso']);
 
@@ -69,18 +69,20 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-    res.cookie("token", "", { 
-        expires: new Date(0) 
+    res.cookie("token", "", {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(0),
     });
     return res.sendStatus(200);
 };
 
 export const verifyToken = async (req, res) => {
-    const {token} = req.cookies
+    const { token } = req.cookies
 
     if (!token) return res.status(401).json({ message: 'No autorizado' });
     jwt.verify(token, TOKEN_SECRET, async (err, user) => {
-        if (err) return res.status(401).json({ message: 'No autorizado'});
+        if (err) return res.status(401).json({ message: 'No autorizado' });
 
         const userFound = await User.findById(user.id)
         if (!userFound) return res.status(401).json({ message: 'No autorizado' });
@@ -99,10 +101,19 @@ export const profile = async (req, res) => {
     const userFound = await User.findById(req.user.id);
     if (!userFound) return res.status(400).json({ message: "User not Found" });
 
-    return res.json( {
+    return res.json({
         id: userFound._id,
         username: userFound.username,
         email: userFound.email,
     })
     res.send("profile");
 }
+
+export const checkAuth = (req, res) => {
+    try {
+      res.status(200).json(req.user);
+    } catch (error) {
+      console.log("Error in checkAuth controller", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  };

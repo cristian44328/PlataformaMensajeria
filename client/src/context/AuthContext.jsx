@@ -1,8 +1,9 @@
-import { Children, createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { registerReq, loginReq, verifyTokenReq } from '../api/auth';
 import Cookies from 'js-cookie';
 import { io } from "socket.io-client";
 
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:4000" : "/";
 
 export const AuthContext = createContext();
 
@@ -19,6 +20,26 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState([]);
+
+    const checkAuth = async () => {
+        try {
+            const res = await verifyTokenReq(Cookies.get("token")); 
+            if (!res.data) {
+                setIsAuthenticated(false);
+                setUser(null);
+                return;
+            }
+            setUser(res.data);
+            setIsAuthenticated(true);
+            connectSocket(res.data._id);
+        } catch (error) {
+            console.log("Error in checkAuth:", error);
+            setUser(null);
+            setIsAuthenticated(false);
+        } finally {
+            setLoading(false); 
+        }
+    };    
 
     const signup = async (user) => {
         try {
@@ -46,7 +67,6 @@ export const AuthProvider = ({ children }) => {
                 return setErrors(error.response.data);
             }
             setErrors([error.response.data.message])
-
         }
     }
 
@@ -70,36 +90,8 @@ export const AuthProvider = ({ children }) => {
         }
     }, [errors])
 
-
     useEffect(() => {
-        async function checkLogin() {
-            const cookies = Cookies.get();
-            if (!cookies.token) {
-                setIsAuthenticated(false);
-                setLoading(false);
-                return setUser(null);
-            }
-
-            try {
-                const res = await verifyTokenReq(cookies.token);
-                //console.log(res)
-                if (!res.data) {
-                    setIsAuthenticated(false);
-                    setLoading(false);
-                    return;
-                }
-                setIsAuthenticated(true);
-                setUser(res.data);
-                connectSocket(res.data._id);
-                setLoading(false);
-            } catch (error) {
-                console.log(error);
-                setIsAuthenticated(false);
-                setUser(null);
-                setLoading(false);
-            }
-        }
-        checkLogin();
+        checkAuth();
     }, []);
 
     const connectSocket = (userId) => {
@@ -134,6 +126,7 @@ export const AuthProvider = ({ children }) => {
       
     return (
         <AuthContext.Provider value={{
+            checkAuth,
             signup,
             signin,
             logout,
